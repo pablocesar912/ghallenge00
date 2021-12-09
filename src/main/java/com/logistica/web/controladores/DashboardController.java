@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.ui.Model;
 
 @Controller
 @RequestMapping("/dashboard")
@@ -94,6 +95,7 @@ public class DashboardController {
     }
 
 
+    // paginador opción 1;
     @GetMapping("/flota")
     public ModelAndView dadorFlota(HttpSession session, Pageable pageable,
             @RequestParam(value = "change", required = false) boolean change,
@@ -150,5 +152,31 @@ public class DashboardController {
 
     }
 
-
+    // paginador opción 1;
+    @GetMapping("/flota")
+    public String paginador(@RequestParam Map<String, Object> param, Model modelo) {
+        Integer page = Integer.valueOf(param.get("page").toString());
+        if (page != null) {
+            page = (Integer.valueOf(param.get("page").toString())-1);
+        } else {
+            page = 0;
+        }
+        
+        PageRequest reqPage = PageRequest.of(page, 10);
+        Page<Viaje> viajeOS = viajeService.listarActivos(reqPage);
+        
+        Integer totalPages = viajeOS.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> allPages = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+            modelo.addAttribute("allPages", allPages);
+        }
+        
+        modelo.addAttribute("list", viajeOS.getContent());
+        modelo.addAttribute("prev", page);
+        modelo.addAttribute("current", page+1);
+        modelo.addAttribute("next", page+2);
+        modelo.addAttribute("last", totalPages);
+        
+        return "flota-dashboard";
+    }
 }
