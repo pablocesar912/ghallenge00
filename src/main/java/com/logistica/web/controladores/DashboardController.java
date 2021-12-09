@@ -165,7 +165,9 @@ public class DashboardController {
         PageRequest reqPage = PageRequest.of(page, 10);
         Page<Viaje> viajeOS = viajeService.listarActivos(reqPage);
         
+        Integer totalElements = viajeOS.getSize();
         Integer totalPages = viajeOS.getTotalPages();
+        
         if (totalPages > 0) {
             List<Integer> allPages = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
             modelo.addAttribute("allPages", allPages);
@@ -176,6 +178,8 @@ public class DashboardController {
         modelo.addAttribute("current", page+1);
         modelo.addAttribute("next", page+2);
         modelo.addAttribute("last", totalPages);
+        modelo.addAttribute("numberOfElements", viajeOS.getNumberOfElements());
+        modelo.addAttribute("totalElements", viajeOS.getSize());
         
         return "flota-dashboard";
     }

@@ -79,18 +79,25 @@
  											<div class="datatable-pager datatable-paging-loaded"> 
                                                                                             <nav aria-label="pagination" >
                                                                                                 <ul class="pagination justify-content-center">
-                                                                                                    <li class="page-item" th:classappend ="${previous == 0 ? 'disabled' : ''}">
-                                                                                                        <a class="page-link" th:ref="@{|/?page=${previous}|}">Previous</a>
+                                                                                                    
+                                                                                                    <li class="page-item" th:classappend ="${prev eq 0 ? 'disabled' : ''}">
+                                                                                                        <a class="page-link" th:ref="@{|/?page=${prev}|}">Anterior</a>
                                                                                                     </li>
-                                                                                                    <li class="page-item" th:each="page : ${allPages}" th:classappend ="${current == page ? 'active' : ''}">
+                                                                                                    
+                                                                                                    <li class="page-item" th:each="page : ${allPages}" th:classappend ="${current eq page ? 'active' : ''}">
                                                                                                         <a class="page-link" th:ref="@{|/?page=${page}|}" th:text="${page}"></a>
                                                                                                     </li>
-                                                                                                    <li class="page-item" th:classappend ="${current == last ? 'disabled' : ''}">
-                                                                                                        <a class="page-link" th:ref="@{|/?page=${next}|}">Next</a>
+                                                                                                    
+                                                                                                    <li class="page-item" th:classappend ="${current eq last ? 'disabled' : ''}">
+                                                                                                        <a class="page-link" th:ref="@{|/?page=${next}|}">Siguiente</a>
                                                                                                     </li>
+                                                                                                    
                                                                                                 </ul>
                                                                                             </nav>
- 											</div> 
+ 											</div>
+                                                                                        <div th:if="${page != null}" class="col-sm-12" style="font-size: 11px;">
+                                                                                             Mostrando <span th:text="${numberOfElements}"></span> de <span th:text="${totalElements}"></span> Órdenes de Servicio.
+                                                                                        </div>
 										</div>
 										<!--end: Datatable-->
 									</div>
