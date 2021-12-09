@@ -94,9 +94,10 @@ public class DashboardController {
         return new ResponseEntity<>(viajes, HttpStatus.OK);
     }
 
-
+          
     // paginador opción 1;
-    @GetMapping("/flota")
+        
+    //@GetMapping("/flota")
     public ModelAndView dadorFlota(HttpSession session, Pageable pageable,
             @RequestParam(value = "change", required = false) boolean change,
             @RequestParam Map<String, Object> param) {
@@ -113,12 +114,7 @@ public class DashboardController {
         modelo.addObject(ALERTAS, notificacionService.buscarAlertasPorUsuario(usuario.getId()));
         modelo.addObject(NUEVAS, notificacionService.countByNotificacionesNoLeidas(usuario.getId()) + notificacionService.countByAlertasNoLeidas(usuario.getId()));
 
-        Integer page = Integer.valueOf(param.get("page").toString());
-        if (page != null) {
-            page = (Integer.valueOf(param.get("page").toString())-1);
-        } else {
-            page = 0;
-        }
+       Integer page = param.get("page") != null ? (Integer.valueOf(param.get("page").toString())-1) : 0;
         
         PageRequest reqPage = PageRequest.of(page, 10);
         Page<Viaje> viajeOS = viajeService.buscarOSPorTrasnporteId(reqPage, e.getId());
@@ -132,7 +128,10 @@ public class DashboardController {
         modelo.addObject("page", viajeOS.getContent());
         modelo.addObject("next", (page+2));
         modelo.addObject("current", (page+1));
-        modelo.addObject("previous", page);
+        modelo.addObject("prev", page);
+        modelo.addObject("last", totalPages);
+        modelo.addObject("numberOfElements", viajeOS.getNumberOfElements());
+        modelo.addObject("totalElements", viajeOS.getSize());
   
         modelo.addObject("ot", viajeService.buscarOTPorTrasnporteId(pageable, e.getId()));
         modelo.addObject("titulo", "Módulo de Flota");
@@ -152,22 +151,17 @@ public class DashboardController {
 
     }
 
-    // paginador opción 1;
+    // paginador opción 2;
+    
     @GetMapping("/flota")
     public String paginador(@RequestParam Map<String, Object> param, Model modelo) {
-        Integer page = Integer.valueOf(param.get("page").toString());
-        if (page != null) {
-            page = (Integer.valueOf(param.get("page").toString())-1);
-        } else {
-            page = 0;
-        }
+        
+        Integer page = param.get("page") != null ? (Integer.valueOf(param.get("page").toString())-1) : 0;
         
         PageRequest reqPage = PageRequest.of(page, 10);
         Page<Viaje> viajeOS = viajeService.listarActivos(reqPage);
         
-        Integer totalElements = viajeOS.getSize();
         Integer totalPages = viajeOS.getTotalPages();
-        
         if (totalPages > 0) {
             List<Integer> allPages = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
             modelo.addAttribute("allPages", allPages);
